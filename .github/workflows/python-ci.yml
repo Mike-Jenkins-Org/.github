@@ -1,0 +1,83 @@
+name: Python CI
+
+on:
+  workflow_call:
+    inputs:
+      source-dir:
+        required: true
+        type: string
+        description: 'Source directory to lint and test (e.g., src/wai)'
+      python-version:
+        required: false
+        type: string
+        default: '3.10'
+        description: 'Python version to use'
+      run-mypy:
+        required: false
+        type: boolean
+        default: true
+        description: 'Whether to run mypy type checking'
+      mypy-strict:
+        required: false
+        type: boolean
+        default: false
+        description: 'If true, mypy failures block the build'
+
+permissions:
+  contents: read
+
+jobs:
+  lint:
+    runs-on: self-hosted
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ inputs.python-version }}
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
+
+      - name: Install dependencies
+        run: uv pip install --system -e ".[dev]"
+
+      - name: Run ruff (lint)
+        run: ruff check ${{ inputs.source-dir }}
+
+      - name: Run ruff (format check)
+        run: ruff format --check ${{ inputs.source-dir }}
+
+      - name: Run mypy
+        if: ${{ inputs.run-mypy }}
+        run: mypy ${{ inputs.source-dir }}
+        continue-on-error: ${{ !inputs.mypy-strict }}
+
+  test:
+    runs-on: self-hosted
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ inputs.python-version }}
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
+
+      - name: Install dependencies
+        run: uv pip install --system -e ".[dev]"
+
+      - name: Run tests with coverage
+        run: pytest tests/ -v --cov=${{ inputs.source-dir }} --cov-report=term-missing --cov-report=xml
+
+      - name: Upload coverage reports
+        uses: codecov/codecov-action@v4
+        with:
+          files: ./coverage.xml
+          fail_ci_if_error: false
+        continue-on-error: true
