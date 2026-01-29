@@ -10,6 +10,7 @@ permissions:
 jobs:
   gitleaks:
     runs-on: self-hosted
+    continue-on-error: true  # License required for gitleaks-action v2
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
