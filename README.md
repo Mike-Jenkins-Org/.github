@@ -23,6 +23,31 @@ jobs:
     uses: Mike-Jenkins-Org/.github/.github/workflows/gitleaks.yml@main
 ```
 
+### Claude Code
+
+Enables @claude mentions on issues and pull requests. Claude will respond to mentions and can help with code reviews, issue triage, and implementation tasks.
+
+```yaml
+# .github/workflows/claude.yml
+name: Claude
+
+on:
+  issue_comment:
+    types: [created]
+  issues:
+    types: [opened, assigned]
+  pull_request_review_comment:
+    types: [created]
+  pull_request_review:
+    types: [submitted]
+
+jobs:
+  claude:
+    uses: Mike-Jenkins-Org/.github/.github/workflows/claude.yml@main
+```
+
+Uses Claude OAuth for authentication (no API key required).
+
 ### Python CI
 
 Standardized Python linting and testing.
