@@ -44,12 +44,9 @@ on:
 jobs:
   claude:
     uses: Mike-Jenkins-Org/.github/.github/workflows/claude.yml@main
-    secrets:
-      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
 ```
 
-**Required Secrets:**
-- `ANTHROPIC_API_KEY` - Your Anthropic API key (must be set in repository or organization secrets)
+Uses Claude OAuth for authentication (no API key required).
 
 ### Python CI
 
