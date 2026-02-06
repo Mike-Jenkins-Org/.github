@@ -1,4 +1,4 @@
-name: GitLeaks Secret Scanning
+name: Secret Scanning
 
 on:
   workflow_call:
@@ -7,13 +7,17 @@ permissions:
   contents: read
 
 jobs:
-  gitleaks:
+  trufflehog:
     runs-on: self-hosted
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Full history for scanning
+          fetch-depth: 0
 
-      - name: Run gitleaks
-        run: gitleaks detect --source . --verbose --redact
+      - name: TruffleHog Secret Scan
+        uses: trufflesecurity/trufflehog@main
+        with:
+          path: ./
+          base: main
+          extra_args: --only-verified
