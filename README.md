@@ -2,11 +2,13 @@
 
 Reusable GitHub Actions workflows for the organization.
 
+> **Note:** All workflows run on self-hosted runners (`AI-Tools-VM`).
+
 ## Available Workflows
 
-### GitLeaks Secret Scanning
+### TruffleHog Secret Scanning
 
-Scans for secrets in your codebase.
+Scans for verified secrets in your codebase using [TruffleHog](https://github.com/trufflesecurity/trufflehog).
 
 ```yaml
 # .github/workflows/security.yml
@@ -22,6 +24,8 @@ jobs:
   gitleaks:
     uses: Mike-Jenkins-Org/.github/.github/workflows/gitleaks.yml@main
 ```
+
+Only reports **verified** secrets (credentials that are confirmed active) to reduce false positives.
 
 ### Claude Code
 
