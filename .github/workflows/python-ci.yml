@@ -15,13 +15,8 @@ on:
       run-mypy:
         required: false
         type: boolean
-        default: true
-        description: 'Whether to run mypy type checking'
-      mypy-strict:
-        required: false
-        type: boolean
         default: false
-        description: 'If true, mypy failures block the build'
+        description: 'Run mypy type checking; errors block the build (opt-in)'
 
 permissions:
   contents: read
@@ -60,7 +55,6 @@ jobs:
       - name: Run mypy
         if: ${{ inputs.run-mypy }}
         run: mypy ${{ inputs.source-dir }}
-        continue-on-error: ${{ !inputs.mypy-strict }}
 
   test:
     runs-on: blacksmith
@@ -86,5 +80,5 @@ jobs:
         uses: codecov/codecov-action@v4
         with:
           files: ./coverage.xml
-          fail_ci_if_error: false
+          fail_ci_if_error: true
         continue-on-error: true

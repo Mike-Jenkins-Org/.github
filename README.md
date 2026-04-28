@@ -45,8 +45,7 @@ jobs:
 |-------|----------|---------|-------------|
 | `source-dir` | Yes | — | Source directory to lint and test |
 | `python-version` | No | `3.12` | Python version to use |
-| `run-mypy` | No | `true` | Whether to run mypy type checking |
-| `mypy-strict` | No | `false` | If true, mypy failures block the build |
+| `run-mypy` | No | `false` | Run mypy type checking; errors block the build (opt-in) |
 
 ### Gitleaks (Secret Scanning)
 
