@@ -21,6 +21,7 @@ jobs:
         with:
           globs: |
             **/*.md
+            !.claude/**
 
       - name: Action lint (workflow YAML)
         uses: raven-actions/actionlint@v2

@@ -1,0 +1,6 @@
+self-hosted-runner:
+  # Custom labels (Blacksmith managed runners). actionlint validates `runs-on:`
+  # values against this list — without it, every `runs-on: blacksmith` is flagged
+  # as an unknown label and CI fails.
+  labels:
+    - blacksmith

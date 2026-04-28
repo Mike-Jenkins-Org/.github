@@ -44,6 +44,13 @@ jobs:
       - name: Install dependencies
         run: uv pip install --system -e ".[dev]"
 
+      - name: Verify source-dir exists
+        run: |
+          if [ ! -d "${{ inputs.source-dir }}" ]; then
+            echo "::error::source-dir '${{ inputs.source-dir }}' does not exist in repo"
+            exit 1
+          fi
+
       - name: Run ruff (lint)
         run: ruff check ${{ inputs.source-dir }}
 

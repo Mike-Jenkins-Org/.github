@@ -29,7 +29,7 @@ This file guides GitHub Copilot's automated PR reviews for `Mike-Jenkins-Org/.gi
 
 ## What to Skip
 
-- Whitespace, indentation, or YAML formatting (handled by actionlint / yamllint in CI)
+- Whitespace, indentation, or YAML formatting (handled by actionlint in CI)
 - Stylistic markdown issues (handled by markdownlint)
 
 ## Review Tone
