@@ -10,7 +10,7 @@ on:
       python-version:
         required: false
         type: string
-        default: '3.10'
+        default: '3.12'
         description: 'Python version to use'
       run-mypy:
         required: false
@@ -28,13 +28,13 @@ permissions:
 
 jobs:
   lint:
-    runs-on: self-hosted
+    runs-on: blacksmith
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: ${{ inputs.python-version }}
 
@@ -56,14 +56,13 @@ jobs:
         continue-on-error: ${{ !inputs.mypy-strict }}
 
   test:
-    runs-on: self-hosted
-    continue-on-error: true  # Integration tests may need authenticated Claude CLI
+    runs-on: blacksmith
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: ${{ inputs.python-version }}
 
