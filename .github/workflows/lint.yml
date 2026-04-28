@@ -1,0 +1,27 @@
+name: Lint
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: blacksmith
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Markdown lint
+        uses: DavidAnson/markdownlint-cli2-action@v23
+        with:
+          globs: |
+            **/*.md
+            !.claude/**
+
+      - name: Action lint (workflow YAML)
+        uses: raven-actions/actionlint@v2

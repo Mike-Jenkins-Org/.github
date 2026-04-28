@@ -1,17 +1,59 @@
 # Mike-Jenkins-Org Shared Workflows
 
-Reusable GitHub Actions workflows for the organization.
+Reusable GitHub Actions workflows + org-level meta files (profile README, Copilot instructions, Dependabot config).
 
-> **Note:** All workflows run on self-hosted runners (`AI-Tools-VM`).
+> **Note:** All workflows run on **Blacksmith** managed runners (`runs-on: blacksmith`).
 
-## Available Workflows
+## What's in this repo
 
-### TruffleHog Secret Scanning
+| Path | Purpose |
+|------|---------|
+| `profile/README.md` | Org landing page rendered at [github.com/Mike-Jenkins-Org](https://github.com/Mike-Jenkins-Org) |
+| `.github/copilot-instructions.md` | PR review guidance for GitHub Copilot on this repo |
+| `.github/dependabot.yml` | Weekly Action version bumps for this repo |
+| `.github/workflows/lint.yml` | Lints this repo's own markdown + workflow YAML |
+| `.github/workflows/security.yml` | Gitleaks scan for this repo |
+| `.github/workflows/python-ci.yml` | **Reusable** Python CI for consumer repos |
+| `.github/workflows/gitleaks.yml` | **Reusable** gitleaks secret scan for consumer repos |
 
-Scans for verified secrets in your codebase using [TruffleHog](https://github.com/trufflesecurity/trufflehog).
+## Reusable workflows for consumer repos
+
+### Python CI
+
+Standardized Python linting (ruff) and testing (pytest with coverage).
 
 ```yaml
-# .github/workflows/security.yml
+# .github/workflows/ci.yml in your repo
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  ci:
+    uses: Mike-Jenkins-Org/.github/.github/workflows/python-ci.yml@main
+    with:
+      source-dir: src
+```
+
+#### Inputs
+
+| Input | Required | Default | Description |
+|-------|----------|---------|-------------|
+| `source-dir` | Yes | — | Source directory to lint and test |
+| `python-version` | No | `3.12` | Python version to use |
+| `run-mypy` | No | `true` | Whether to run mypy type checking |
+| `mypy-strict` | No | `false` | If true, mypy failures block the build |
+
+### Gitleaks (Secret Scanning)
+
+Detects committed secrets using the gitleaks binary (free, MIT-licensed). The binary is installed at runtime from the latest GitHub release — no Action license required.
+
+```yaml
+# .github/workflows/security.yml in your repo
 name: Security
 
 on:
@@ -25,65 +67,15 @@ jobs:
     uses: Mike-Jenkins-Org/.github/.github/workflows/gitleaks.yml@main
 ```
 
-Only reports **verified** secrets (credentials that are confirmed active) to reduce false positives.
-
-### Claude Code
-
-Enables @claude mentions on issues and pull requests. Claude will respond to mentions and can help with code reviews, issue triage, and implementation tasks.
-
-```yaml
-# .github/workflows/claude.yml
-name: Claude
-
-on:
-  issue_comment:
-    types: [created]
-  issues:
-    types: [opened, assigned]
-  pull_request_review_comment:
-    types: [created]
-  pull_request_review:
-    types: [submitted]
-
-jobs:
-  claude:
-    uses: Mike-Jenkins-Org/.github/.github/workflows/claude.yml@main
-```
-
-Uses Claude OAuth for authentication (no API key required).
-
-### Python CI
-
-Standardized Python linting and testing.
-
-```yaml
-# .github/workflows/ci.yml
-name: CI
-
-on:
-  push:
-    branches: [main]
-  pull_request:
-    branches: [main]
-
-jobs:
-  ci:
-    uses: Mike-Jenkins-Org/.github/.github/workflows/python-ci.yml@main
-    with:
-      source-dir: src/your-package
-```
-
 #### Inputs
 
 | Input | Required | Default | Description |
 |-------|----------|---------|-------------|
-| `source-dir` | Yes | - | Source directory to lint and test (e.g., `src/wai`) |
-| `python-version` | No | `3.10` | Python version to use |
-| `run-mypy` | No | `true` | Whether to run mypy type checking |
-| `mypy-strict` | No | `false` | If true, mypy failures block the build |
+| `config-file` | No | (none) | Optional path to a `.gitleaks.toml` config file. If empty, gitleaks defaults are used. |
 
-## Adding New Workflows
+## Adding new reusable workflows
 
-1. Create a new workflow in `.github/workflows/`
-2. Use `workflow_call` trigger to make it reusable
-3. Document inputs in this README
+1. Create the workflow under `.github/workflows/`
+2. Use `workflow_call` trigger to make it consumable
+3. Set `runs-on: blacksmith`
+4. Document inputs in this README

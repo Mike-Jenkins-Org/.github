@@ -1,23 +1,20 @@
-name: Secret Scanning
+name: Security Scan
 
 on:
-  workflow_call:
-    inputs:
-      config-file:
-        required: false
-        type: string
-        default: ''
-        description: 'Optional path to .gitleaks.toml config file. If empty, gitleaks defaults are used.'
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
 
 permissions:
   contents: read
 
 jobs:
   gitleaks:
+    name: Gitleaks
     runs-on: blacksmith
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v6
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
@@ -39,9 +36,4 @@ jobs:
           sudo install -m 755 gitleaks /usr/local/bin/gitleaks
 
       - name: Run gitleaks
-        run: |
-          if [ -n "${{ inputs.config-file }}" ]; then
-            gitleaks detect --source . --config "${{ inputs.config-file }}" --verbose
-          else
-            gitleaks detect --source . --verbose
-          fi
+        run: gitleaks detect --source . --verbose
